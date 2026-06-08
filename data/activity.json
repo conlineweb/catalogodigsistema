@@ -1,0 +1,93 @@
+[
+    {
+        "timestamp": "2026-06-02T23:58:47+02:00",
+        "action": "order_created",
+        "order_id": "ORD-20260602-0001",
+        "user": "system",
+        "details": "Método: whatsapp | Total: $1,250.00"
+    },
+    {
+        "timestamp": "2026-06-02T23:59:42+02:00",
+        "action": "order_created",
+        "order_id": "ORD-20260602-0002",
+        "user": "system",
+        "details": "Método: transfer | Total: $1,250.00"
+    },
+    {
+        "timestamp": "2026-06-03T00:20:10+02:00",
+        "action": "status_change",
+        "order_id": "ORD-20260602-0002",
+        "user": "admin",
+        "details": "→ paid"
+    },
+    {
+        "timestamp": "2026-06-03T00:24:59+02:00",
+        "action": "status_change",
+        "order_id": "ORD-20260602-0002",
+        "user": "admin",
+        "details": "→ attended"
+    },
+    {
+        "timestamp": "2026-06-03T00:44:35+02:00",
+        "action": "order_created",
+        "order_id": "ORD-20260603-0003",
+        "user": "system",
+        "details": "Método: card | Total: $1,690.00"
+    },
+    {
+        "timestamp": "2026-06-03T00:44:58+02:00",
+        "action": "order_updated",
+        "order_id": "ORD-20260603-0003",
+        "user": "admin",
+        "details": "Actualización de pedido"
+    },
+    {
+        "timestamp": "2026-06-03T00:48:34+02:00",
+        "action": "order_updated",
+        "order_id": "ORD-20260602-0001",
+        "user": "admin",
+        "details": "Actualización de pedido"
+    },
+    {
+        "timestamp": "2026-06-02T19:44:18-04:00",
+        "action": "order_updated",
+        "order_id": "ORD-20260603-0003",
+        "user": "admin",
+        "details": "Actualización de pedido"
+    },
+    {
+        "timestamp": "2026-06-02T19:44:23-04:00",
+        "action": "order_updated",
+        "order_id": "ORD-20260603-0003",
+        "user": "admin",
+        "details": "Actualización de pedido"
+    },
+    {
+        "timestamp": "2026-06-02T19:44:53-04:00",
+        "action": "order_updated",
+        "order_id": "ORD-20260603-0003",
+        "user": "admin",
+        "details": "Actualización de pedido"
+    },
+    {
+        "timestamp": "2026-06-02T22:42:57-04:00",
+        "action": "order_created",
+        "order_id": "ORD-20260602-0004",
+        "user": "system",
+        "details": "Método: transfer | Total: $4,250.00"
+    },
+    {
+        "timestamp": "2026-06-02T22:43:08-04:00",
+        "action": "order_updated",
+        "order_id": "ORD-20260602-0004",
+        "user": "admin",
+        "details": "Actualización de pedido"
+    },
+    {
+        "timestamp": "2026-06-02T22:43:13-04:00",
+        "action": "order_updated",
+        "order_id": "ORD-20260602-0004",
+        "user": "admin",
+        "details": "Actualización de pedido"
+    }
+]

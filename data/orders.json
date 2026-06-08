@@ -1,0 +1,271 @@
+[
+    {
+        "id": "ORD-20260602-0001",
+        "number": 1,
+        "created_at": "2026-06-02T23:58:47+02:00",
+        "customer": {
+            "name": "jose",
+            "email": "servicios@conlineweb.com",
+            "street": "Calle Ana María 104",
+            "city": "León",
+            "zip": "37420"
+        },
+        "items": [
+            {
+                "id": 1,
+                "name": "Bujía Iridium",
+                "price": 450,
+                "quantity": 1
+            },
+            {
+                "id": 2,
+                "name": "Filtro de Aceite",
+                "price": 180,
+                "quantity": 1
+            },
+            {
+                "id": 3,
+                "name": "Correa de Distribución",
+                "price": 620,
+                "quantity": 1
+            }
+        ],
+        "total": 1250,
+        "payment_method": "whatsapp",
+        "payment_status": "pending",
+        "delivery_status": "delivered",
+        "access": {
+            "username": "jose001",
+            "password": "pXC24bME"
+        },
+        "notes": "",
+        "activity": [
+            {
+                "timestamp": "2026-06-02T23:58:47+02:00",
+                "action": "created",
+                "user": "system",
+                "note": "Pedido creado desde tienda web"
+            },
+            {
+                "timestamp": "2026-06-03T00:48:34+02:00",
+                "action": "delivery_change",
+                "user": "admin",
+                "note": "Entrega: Pendiente → Entregado"
+            }
+        ],
+        "delivered_at": "2026-06-03T00:48:34+02:00"
+    },
+    {
+        "id": "ORD-20260602-0002",
+        "number": 2,
+        "created_at": "2026-06-02T23:59:42+02:00",
+        "customer": {
+            "name": "jose",
+            "email": "servicios@conlineweb.com",
+            "street": "Calle Ana María 104",
+            "city": "León",
+            "zip": "37420"
+        },
+        "items": [
+            {
+                "id": 2,
+                "name": "Filtro de Aceite",
+                "price": 180,
+                "quantity": 1
+            },
+            {
+                "id": 1,
+                "name": "Bujía Iridium",
+                "price": 450,
+                "quantity": 1
+            },
+            {
+                "id": 3,
+                "name": "Correa de Distribución",
+                "price": 620,
+                "quantity": 1
+            }
+        ],
+        "total": 1250,
+        "payment_method": "transfer",
+        "payment_status": "transfer",
+        "delivery_status": "delivered",
+        "access": {
+            "username": "jose002",
+            "password": "73zdzArw"
+        },
+        "notes": "",
+        "activity": [
+            {
+                "timestamp": "2026-06-02T23:59:42+02:00",
+                "action": "created",
+                "user": "system",
+                "note": "Pedido creado desde tienda web"
+            },
+            {
+                "timestamp": "2026-06-03T00:20:10+02:00",
+                "action": "status_change",
+                "user": "admin",
+                "note": "Estatus → paid"
+            },
+            {
+                "timestamp": "2026-06-03T00:24:59+02:00",
+                "action": "status_change",
+                "user": "admin",
+                "note": "Estatus → attended"
+            }
+        ],
+        "paid_at": "2026-06-03T00:20:10+02:00",
+        "attended_at": "2026-06-03T00:24:59+02:00"
+    },
+    {
+        "id": "ORD-20260603-0003",
+        "number": 3,
+        "created_at": "2026-06-03T00:44:35+02:00",
+        "customer": {
+            "name": "jose",
+            "email": "servicios@conlineweb.com",
+            "street": "Calle Ana María 104",
+            "city": "León",
+            "zip": "37420"
+        },
+        "items": [
+            {
+                "id": 2,
+                "name": "Filtro de Aceite",
+                "price": 180,
+                "quantity": 1
+            },
+            {
+                "id": 3,
+                "name": "Correa de Distribución",
+                "price": 620,
+                "quantity": 1
+            },
+            {
+                "id": 4,
+                "name": "Bomba de Agua",
+                "price": 890,
+                "quantity": 1
+            }
+        ],
+        "total": 1690,
+        "payment_method": "card",
+        "payment_status": "card",
+        "delivery_status": "delivered",
+        "access": {
+            "username": "jose003",
+            "password": "QjymNskJ"
+        },
+        "notes": "hola",
+        "activity": [
+            {
+                "timestamp": "2026-06-03T00:44:35+02:00",
+                "action": "created",
+                "user": "system",
+                "note": "Pedido creado desde tienda web"
+            },
+            {
+                "timestamp": "2026-06-03T00:44:58+02:00",
+                "action": "delivery_change",
+                "user": "admin",
+                "note": "Entrega: Pendiente → Entregado"
+            },
+            {
+                "timestamp": "2026-06-02T19:44:18-04:00",
+                "action": "payment_change",
+                "user": "admin",
+                "note": "Pago: Tarjeta → Efectivo"
+            },
+            {
+                "timestamp": "2026-06-02T19:44:23-04:00",
+                "action": "payment_change",
+                "user": "admin",
+                "note": "Pago: Efectivo → Tarjeta"
+            },
+            {
+                "timestamp": "2026-06-02T19:44:53-04:00",
+                "action": "note",
+                "user": "admin",
+                "note": "Nota: hola"
+            }
+        ],
+        "paid_at": "2026-06-03T00:44:35+02:00",
+        "delivered_at": "2026-06-03T00:44:58+02:00"
+    },
+    {
+        "id": "ORD-20260602-0004",
+        "number": 4,
+        "created_at": "2026-06-02T22:42:57-04:00",
+        "customer": {
+            "name": "jose",
+            "email": "servicios@conlineweb.com",
+            "street": "Calle Ana María 104",
+            "city": "León",
+            "zip": "37420"
+        },
+        "items": [
+            {
+                "id": 16,
+                "name": "Faros LED",
+                "price": 990,
+                "quantity": 2
+            },
+            {
+                "id": 3,
+                "name": "Correa de Distribución",
+                "price": 620,
+                "quantity": 1
+            },
+            {
+                "id": 4,
+                "name": "Bomba de Agua",
+                "price": 890,
+                "quantity": 1
+            },
+            {
+                "id": 2,
+                "name": "Filtro de Aceite",
+                "price": 180,
+                "quantity": 1
+            },
+            {
+                "id": 8,
+                "name": "Barra Estabilizadora",
+                "price": 580,
+                "quantity": 1
+            }
+        ],
+        "total": 4250,
+        "payment_method": "transfer",
+        "payment_status": "cash",
+        "delivery_status": "delivered",
+        "access": {
+            "username": "jose004",
+            "password": "jQghJLhC"
+        },
+        "notes": "",
+        "activity": [
+            {
+                "timestamp": "2026-06-02T22:42:57-04:00",
+                "action": "created",
+                "user": "system",
+                "note": "Pedido creado desde tienda web"
+            },
+            {
+                "timestamp": "2026-06-02T22:43:08-04:00",
+                "action": "payment_change",
+                "user": "admin",
+                "note": "Pago: Pendiente → Efectivo"
+            },
+            {
+                "timestamp": "2026-06-02T22:43:13-04:00",
+                "action": "delivery_change",
+                "user": "admin",
+                "note": "Entrega: Pendiente → Entregado"
+            }
+        ],
+        "paid_at": "2026-06-02T22:43:08-04:00",
+        "delivered_at": "2026-06-02T22:43:13-04:00"
+    }
+]
