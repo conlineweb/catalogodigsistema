@@ -85,9 +85,13 @@ textarea.new-input{resize:vertical;min-height:46px}
 .edit-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(230,126,34,.12)}
 .price-input{min-width:110px}
 .file-input{font-size:.76rem;max-width:190px}
+.product-actions{display:flex;gap:.4rem;flex-wrap:wrap}
 .btn-save{border:none;background:linear-gradient(135deg,#C0392B,#E67E22);color:#fff;border-radius:30px;padding:.55rem 1rem;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:0 8px 18px rgba(230,126,34,.22)}
 .btn-save:hover{filter:brightness(.96);transform:translateY(-1px)}
 .btn-save:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-delete{border:none;background:#FEE2E2;color:#B91C1C;border-radius:30px;padding:.55rem .9rem;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-delete:hover{background:#DC2626;color:#fff;transform:translateY(-1px)}
+.btn-delete:disabled{opacity:.6;cursor:not-allowed;transform:none}
 @media(max-width:768px){
   .sidebar{width:58px}.sb-title,.sb-sub,.nav-item span{display:none}.main{margin-left:58px}.content{padding:1rem}.hero{align-items:flex-start;flex-direction:column}.topbar{padding:1rem}.form-grid{grid-template-columns:1fr}.form-field.full{grid-column:span 1}
 }
@@ -103,6 +107,7 @@ textarea.new-input{resize:vertical;min-height:46px}
     <a class="nav-item" href="/catalogodigsistema/admin/index.php"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
     <a class="nav-item active" href="/catalogodigsistema/admin/products.php"><i class="fas fa-tags"></i><span>Catálogo</span></a>
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php"><i class="fas fa-box-open"></i><span>Pedidos</span></a>
+    <a class="nav-item" href="/catalogodigsistema/admin/company.php"><i class="fas fa-building"></i><span>Empresa</span></a>
     <a class="nav-item" href="/catalogodigsistema/index.php" target="_blank"><i class="fas fa-store"></i><span>Ver tienda</span></a>
   </nav>
   <div class="sidebar-footer">
@@ -221,7 +226,10 @@ function buildRows() {
       <td><input class="edit-input name-input" value="${esc(product.name)}" aria-label="Nombre de ${esc(product.name)}"></td>
       <td><input class="edit-input price-input" type="number" min="0.01" step="0.01" value="${Number(product.price).toFixed(2)}" aria-label="Precio de ${esc(product.name)}"></td>
       <td><input class="file-input image-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></td>
-      <td><button class="btn-save" onclick="saveProduct(${id}, this)"><i class="fas fa-save"></i> Guardar</button></td>
+      <td><div class="product-actions">
+        <button class="btn-save" onclick="saveProduct(${id}, this)"><i class="fas fa-save"></i> Guardar</button>
+        <button class="btn-delete" onclick="deleteProduct(${id}, this)"><i class="fas fa-trash-alt"></i> Eliminar</button>
+      </div></td>
     </tr>`;
   }).join('');
 }
@@ -313,6 +321,42 @@ async function saveProduct(id, button) {
   } finally {
     button.disabled = false;
     button.innerHTML = '<i class="fas fa-save"></i> Guardar';
+  }
+}
+
+async function deleteProduct(id, button) {
+  const product = PRODUCTS.find(p => parseInt(p.id, 10) === id);
+  if (!product) return;
+
+  const result = await Swal.fire({
+    title: 'Eliminar producto',
+    html: `Se eliminará <strong>${esc(product.name)}</strong> del catálogo público.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#DC2626',
+  });
+  if (!result.isConfirmed) return;
+
+  button.disabled = true;
+  button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Eliminando';
+  try {
+    const res = await fetch('/catalogodigsistema/api/delete_product.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id})
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo eliminar');
+    const idx = PRODUCTS.findIndex(p => parseInt(p.id, 10) === id);
+    if (idx !== -1) PRODUCTS.splice(idx, 1);
+    refreshProductsTable();
+    Swal.fire({icon:'success',title:'Producto eliminado',timer:1200,showConfirmButton:false,toast:true,position:'top-end'});
+  } catch (error) {
+    Swal.fire('Error', error.message, 'error');
+    button.disabled = false;
+    button.innerHTML = '<i class="fas fa-trash-alt"></i> Eliminar';
   }
 }
 

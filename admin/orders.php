@@ -3,6 +3,8 @@ require_once dirname(__DIR__) . '/includes/auth.php';
 requireAdmin();
 
 $allOrders = array_reverse(readJson('orders'));
+$company = companyInfo();
+$companyForTicket = array_map(fn($value) => is_string($value) ? htmlspecialchars_decode($value, ENT_QUOTES) : $value, $company);
 
 $counts = [
     'all'       => count($allOrders),
@@ -12,6 +14,7 @@ $counts = [
 ];
 
 $ordersJson = json_encode(array_values($allOrders), JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+$companyJson = json_encode($companyForTicket, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -113,6 +116,7 @@ body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#1a2c3e;display:fle
     <a class="nav-item" href="/catalogodigsistema/admin/index.php"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
     <a class="nav-item" href="/catalogodigsistema/admin/products.php"><i class="fas fa-tags"></i><span>Catálogo</span></a>
     <a class="nav-item active" href="/catalogodigsistema/admin/orders.php"><i class="fas fa-box-open"></i><span>Pedidos</span></a>
+    <a class="nav-item" href="/catalogodigsistema/admin/company.php"><i class="fas fa-building"></i><span>Empresa</span></a>
     <a class="nav-item" href="/catalogodigsistema/index.php" target="_blank"><i class="fas fa-store"></i><span>Ver tienda</span></a>
   </nav>
   <div class="sidebar-footer">
@@ -162,6 +166,7 @@ body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#1a2c3e;display:fle
 <script>
 /* ── DATA ── */
 const ALL_ORDERS = <?= $ordersJson ?>;
+const COMPANY = <?= $companyJson ?>;
 
 const PAY_LABELS = {pending:'Pendiente',transfer:'Transferencia',cash:'Efectivo',card:'Tarjeta'};
 const PAY_CSS    = {pending:'b-pay-pending',transfer:'b-pay-transfer',cash:'b-pay-cash',card:'b-pay-card'};
@@ -364,6 +369,67 @@ async function doChange(orderId, field, value) {
     }
 }
 
+function pdfValue(value, fallback = '—') {
+    const text = String(value || '').trim();
+    return text || fallback;
+}
+
+function pdfDate(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('es-MX') + ' ' + date.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
+}
+
+function companyDisplayName() {
+    return pdfValue(COMPANY.commercial_name || COMPANY.legal_name, 'AutoRepuestos Pro');
+}
+
+function companyAddress() {
+    return [
+        COMPANY.street,
+        COMPANY.neighborhood ? 'Col. ' + COMPANY.neighborhood : '',
+        COMPANY.city,
+        COMPANY.state,
+        COMPANY.zip ? 'CP ' + COMPANY.zip : ''
+    ].filter(Boolean).join(', ') || '—';
+}
+
+function companyTicketSections() {
+    return [
+        [
+            'Razón Social: ' + pdfValue(COMPANY.legal_name) + '\n' +
+            'Nombre Comercial: ' + companyDisplayName() + '\n' +
+            'RFC: ' + pdfValue(COMPANY.rfc) + '\n' +
+            'Giro / Industria: ' + pdfValue(COMPANY.industry) + '\n' +
+            'Tamaño: ' + pdfValue(COMPANY.company_size) + '\n' +
+            'Empleados: ' + pdfValue(COMPANY.employee_count),
+            'Calle: ' + pdfValue(COMPANY.street) + '\n' +
+            'Colonia: ' + pdfValue(COMPANY.neighborhood) + '\n' +
+            'Ciudad: ' + pdfValue(COMPANY.city) + '\n' +
+            'Estado: ' + pdfValue(COMPANY.state) + '\n' +
+            'Código Postal: ' + pdfValue(COMPANY.zip),
+            'Web: ' + pdfValue(COMPANY.website) + '\n' +
+            'Correo empresa: ' + pdfValue(COMPANY.company_email) + '\n' +
+            'Teléfono empresa: ' + pdfValue(COMPANY.company_phone) + '\n' +
+            'Contacto: ' + pdfValue(COMPANY.contact_name) + '\n' +
+            'Puesto: ' + pdfValue(COMPANY.contact_position) + '\n' +
+            'Correo contacto: ' + pdfValue(COMPANY.contact_email) + '\n' +
+            'Teléfono contacto: ' + pdfValue(COMPANY.contact_phone),
+        ],
+        [
+            'Medio de Captación: ' + pdfValue(COMPANY.lead_source),
+            'Ejecutivo Asignado: ' + pdfValue(COMPANY.assigned_executive),
+            'Estatus: ' + pdfValue(COMPANY.status) + '\n' +
+            'Observaciones: ' + pdfValue(COMPANY.observations),
+        ],
+        [
+            'Fecha de Registro: ' + pdfDate(COMPANY.registered_at),
+            'Usuario que Registró: ' + pdfValue(COMPANY.registered_by),
+            'Fecha de Actualización: ' + pdfDate(COMPANY.updated_at),
+        ],
+    ];
+}
+
 /* ── PDF GENERATION ── */
 function generatePDF(orderId) {
     const order = ALL_ORDERS.find(o => o.id === orderId);
@@ -377,9 +443,10 @@ function generatePDF(orderId) {
     doc.rect(0,0,W,28,'F');
     doc.setTextColor(255,255,255);
     doc.setFont('helvetica','bold'); doc.setFontSize(15);
-    doc.text('AutoRepuestos Pro', M, 13);
+    doc.text(companyDisplayName(), M, 13);
     doc.setFont('helvetica','normal'); doc.setFontSize(8.5);
     doc.text('Orden de Pedido / Ticket Oficial', M, 20);
+    if (COMPANY.rfc) doc.text('RFC: '+COMPANY.rfc, M, 25);
     doc.text('Folio: '+order.id, W-M, 13, {align:'right'});
     doc.text(new Date(order.created_at).toLocaleDateString('es-MX'), W-M, 20, {align:'right'});
 
@@ -406,6 +473,18 @@ function generatePDF(orderId) {
     const chMap = {whatsapp:'WhatsApp',transfer:'Transferencia',card:'Tarjeta',cash:'Efectivo'};
     doc.text('Canal: '+(chMap[order.payment_method]||order.payment_method), W-M, y, {align:'right'});
     y += 12;
+
+    doc.autoTable({
+        startY:y,
+        head:[['Datos de la empresa','Dirección','Contacto / Comercial']],
+        body: companyTicketSections(),
+        theme:'grid',
+        margin:{left:M,right:M},
+        headStyles:{fillColor:[26,44,62],fontStyle:'bold',fontSize:7.5},
+        bodyStyles:{fontSize:7,cellPadding:2.2,valign:'top'},
+        columnStyles:{0:{cellWidth:60},1:{cellWidth:48},2:{cellWidth:'auto'}},
+    });
+    y = doc.lastAutoTable.finalY + 8;
 
     // Customer + order boxes
     const half = (W-M*2)/2;
@@ -447,7 +526,7 @@ function generatePDF(orderId) {
     });
     y=doc.lastAutoTable.finalY+10;
     doc.setFontSize(7); doc.setTextColor(150); doc.setFont('helvetica','normal');
-    doc.text('AutoRepuestos Pro · Refacciones originales · Calidad garantizada', W/2, y, {align:'center'});
+    doc.text(companyDisplayName()+' · '+pdfValue(COMPANY.company_phone, 'Refacciones originales')+' · '+pdfValue(COMPANY.company_email, 'Calidad garantizada'), W/2, y, {align:'center'});
     doc.text('Generado el '+new Date().toLocaleDateString('es-MX'), W/2, y+4.5, {align:'center'});
     doc.save('Pedido-'+order.id+'.pdf');
 }

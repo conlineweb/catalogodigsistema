@@ -149,6 +149,9 @@ tr:hover td{background:#fafcfc}
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php">
       <i class="fas fa-clock"></i><span>Pendientes</span>
     </a>
+    <a class="nav-item" href="/catalogodigsistema/admin/company.php">
+      <i class="fas fa-building"></i><span>Empresa</span>
+    </a>
     <a class="nav-item" href="/catalogodigsistema/index.php" target="_blank">
       <i class="fas fa-store"></i><span>Ver tienda</span>
     </a>

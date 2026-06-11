@@ -407,7 +407,7 @@ async function collectCustomerData() {
         Swal.showValidationMessage('Completa: ' + missing.join(', '));
         return false;
       }
-      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(data.email)) {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
         Swal.showValidationMessage('Ingresa un correo electrónico válido');
         return false;
       }

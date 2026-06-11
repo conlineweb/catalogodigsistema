@@ -2,6 +2,16 @@
 require_once dirname(__DIR__) . '/includes/auth.php';
 requireAdmin();
 
+$company = companyInfo();
+$company = array_map(fn($value) => is_string($value) ? htmlspecialchars_decode($value, ENT_QUOTES) : $value, $company);
+$companyName = $company['commercial_name'] ?: ($company['legal_name'] ?: 'AutoRepuestos Pro');
+$companyAddress = trim(implode(', ', array_filter([
+    $company['street'] ?? '',
+    !empty($company['neighborhood']) ? 'Col. ' . $company['neighborhood'] : '',
+    $company['city'] ?? '',
+    $company['state'] ?? '',
+    !empty($company['zip']) ? 'CP ' . $company['zip'] : '',
+])));
 $orderId = sanitize($_GET['id'] ?? '');
 if (empty($orderId)) { header('Location: /catalogodigsistema/admin/orders.php'); exit; }
 
@@ -37,7 +47,7 @@ $deliveredAt    = isset($order['delivered_at']) ? new DateTime($order['delivered
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pedido <?= htmlspecialchars($order['id']) ?> · AutoRepuestos Pro</title>
+<title>Pedido <?= htmlspecialchars($order['id']) ?> · <?= htmlspecialchars($companyName) ?></title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -126,6 +136,7 @@ tr:last-child td{border-bottom:none}
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php?status=pending"><i class="fas fa-clock"></i><span>Pendientes</span></a>
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php?status=pending_transfer"><i class="fas fa-university"></i><span>Transferencias</span></a>
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php?status=paid"><i class="fas fa-check-circle"></i><span>Pagados</span></a>
+    <a class="nav-item" href="/catalogodigsistema/admin/company.php"><i class="fas fa-building"></i><span>Empresa</span></a>
     <a class="nav-item" href="/catalogodigsistema/index.php" target="_blank"><i class="fas fa-store"></i><span>Ver tienda</span></a>
   </nav>
   <div class="sidebar-footer">
@@ -153,8 +164,16 @@ tr:last-child td{border-bottom:none}
       <!-- Ticket header (print only) -->
       <div class="ticket-header">
         <div>
-          <div style="font-size:1.4rem;font-weight:800">AutoRepuestos Pro</div>
+          <div style="font-size:1.4rem;font-weight:800"><?= htmlspecialchars($companyName) ?></div>
           <div style="color:#E67E22;font-weight:600">Ticket de Pedido</div>
+          <?php if (!empty($company['rfc']) || !empty($company['company_phone']) || !empty($company['company_email']) || $companyAddress): ?>
+          <div style="font-size:.78rem;color:#6c8695;margin-top:.25rem">
+            <?= $companyAddress ? htmlspecialchars($companyAddress) . '<br>' : '' ?>
+            <?= !empty($company['rfc']) ? 'RFC: ' . htmlspecialchars($company['rfc']) . ' · ' : '' ?>
+            <?= !empty($company['company_phone']) ? 'Tel: ' . htmlspecialchars($company['company_phone']) . ' · ' : '' ?>
+            <?= !empty($company['company_email']) ? htmlspecialchars($company['company_email']) : '' ?>
+          </div>
+          <?php endif; ?>
         </div>
         <div style="text-align:right;font-size:.85rem">
           <div><strong><?= htmlspecialchars($order['id']) ?></strong></div>

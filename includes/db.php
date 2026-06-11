@@ -54,12 +54,48 @@ function productsForCatalog(): array {
     return $products;
 }
 
+function defaultCompanyInfo(): array {
+    return [
+        'legal_name'        => '',
+        'commercial_name'   => 'AutoRepuestos Pro',
+        'rfc'               => '',
+        'industry'          => '',
+        'company_size'      => '',
+        'employee_count'    => '',
+        'website'           => '',
+        'company_email'     => '',
+        'company_phone'     => '',
+        'street'            => '',
+        'neighborhood'      => '',
+        'city'              => '',
+        'state'             => '',
+        'zip'               => '',
+        'contact_name'      => '',
+        'contact_position'  => '',
+        'contact_email'     => '',
+        'contact_phone'     => '',
+        'lead_source'       => '',
+        'assigned_executive'=> '',
+        'status'            => 'Prospecto',
+        'observations'      => '',
+        'registered_at'     => '',
+        'registered_by'     => '',
+        'updated_at'        => '',
+    ];
+}
+
+function companyInfo(): array {
+    $company = readJson('company');
+    return array_merge(defaultCompanyInfo(), $company);
+}
+
 /* ── Initialise default data on first run ── */
 function initDb(): void {
     if (!is_dir(DATA_DIR)) mkdir(DATA_DIR, 0755, true);
     if (!file_exists(DATA_DIR . 'orders.json'))   writeJson('orders',   []);
     if (!file_exists(DATA_DIR . 'activity.json')) writeJson('activity', []);
     if (!file_exists(DATA_DIR . 'products.json')) writeJson('products', defaultProducts());
+    if (!file_exists(DATA_DIR . 'company.json'))  writeJson('company',  defaultCompanyInfo());
     if (!file_exists(DATA_DIR . 'users.json')) {
         writeJson('users', [[
             'id'            => 'USR-ADMIN-001',
