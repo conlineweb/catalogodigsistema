@@ -53,6 +53,20 @@ body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#1a2c3e;display:fle
 .hero p{color:#c8d7df;font-size:.9rem;max-width:720px;line-height:1.5}
 .hero-stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:1rem 1.2rem;min-width:140px;text-align:center}
 .hero-stat strong{font-size:2rem;display:block}
+.form-card{background:#fff;border-radius:22px;padding:1.4rem;margin-bottom:1.4rem;box-shadow:0 2px 16px rgba(0,0,0,.05)}
+.form-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.form-head h3{font-size:.95rem;display:flex;align-items:center;gap:8px}
+.form-head h3 i{color:var(--orange)}
+.form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.9rem;align-items:end}
+.form-field{display:flex;flex-direction:column;gap:.35rem}
+.form-field label{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.form-field.full{grid-column:span 2}
+.new-input{width:100%;border:2px solid #e2ecea;border-radius:14px;padding:.62rem .75rem;font-family:'Inter',sans-serif;font-weight:600;color:#1a2c3e;outline:none;background:#fff}
+.new-input:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(230,126,34,.12)}
+textarea.new-input{resize:vertical;min-height:46px}
+.btn-add-product{border:none;background:linear-gradient(135deg,#C0392B,#E67E22);color:#fff;border-radius:30px;padding:.68rem 1rem;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;box-shadow:0 8px 18px rgba(230,126,34,.22)}
+.btn-add-product:hover{filter:brightness(.96);transform:translateY(-1px)}
+.btn-add-product:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .table-card{background:#fff;border-radius:22px;padding:1.4rem;box-shadow:0 2px 16px rgba(0,0,0,.05)}
 .table-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
 .table-head h3{font-size:.95rem;display:flex;align-items:center;gap:8px}
@@ -75,7 +89,7 @@ body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#1a2c3e;display:fle
 .btn-save:hover{filter:brightness(.96);transform:translateY(-1px)}
 .btn-save:disabled{opacity:.6;cursor:not-allowed;transform:none}
 @media(max-width:768px){
-  .sidebar{width:58px}.sb-title,.sb-sub,.nav-item span{display:none}.main{margin-left:58px}.content{padding:1rem}.hero{align-items:flex-start;flex-direction:column}.topbar{padding:1rem}
+  .sidebar{width:58px}.sb-title,.sb-sub,.nav-item span{display:none}.main{margin-left:58px}.content{padding:1rem}.hero{align-items:flex-start;flex-direction:column}.topbar{padding:1rem}.form-grid{grid-template-columns:1fr}.form-field.full{grid-column:span 1}
 }
 </style>
 </head>
@@ -106,9 +120,48 @@ body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#1a2c3e;display:fle
     <section class="hero">
       <div>
         <h1>Administración visual de productos</h1>
-        <p>Actualiza nombre, precio e imagen desde una tabla ordenable. Los cambios se reflejan automáticamente en la tienda pública.</p>
+        <p>Agrega nuevos productos y actualiza nombre, precio e imagen desde una tabla ordenable. Los cambios se reflejan automáticamente en la tienda pública.</p>
       </div>
-      <div class="hero-stat"><strong><?= count($products) ?></strong><span>productos</span></div>
+      <div class="hero-stat"><strong id="productCount"><?= count($products) ?></strong><span>productos</span></div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-head">
+        <h3><i class="fas fa-circle-plus"></i> Agregar producto nuevo</h3>
+        <div class="hint"><i class="fas fa-circle-info"></i> El icono es opcional; si subes imagen, se mostrará en la tienda.</div>
+      </div>
+      <form id="createProductForm" class="form-grid" enctype="multipart/form-data">
+        <div class="form-field">
+          <label for="newName">Producto</label>
+          <input id="newName" name="name" class="new-input" placeholder="Ej. Radiador compacto" required>
+        </div>
+        <div class="form-field">
+          <label for="newCategory">Categoría</label>
+          <select id="newCategory" name="category" class="new-input" required>
+            <option value="">Selecciona</option>
+            <?php foreach ($categoryLabels as $key => $label): ?>
+            <option value="<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($label) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="newPrice">Precio</label>
+          <input id="newPrice" name="price" class="new-input" type="number" min="0.01" step="0.01" placeholder="0.00" required>
+        </div>
+        <div class="form-field">
+          <label for="newIcon">Icono Font Awesome</label>
+          <input id="newIcon" name="icon" class="new-input" placeholder="fas fa-box">
+        </div>
+        <div class="form-field full">
+          <label for="newDesc">Descripción</label>
+          <textarea id="newDesc" name="desc" class="new-input" placeholder="Descripción breve para la tarjeta pública" required></textarea>
+        </div>
+        <div class="form-field">
+          <label for="newImage">Imagen</label>
+          <input id="newImage" name="image" class="new-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+        </div>
+        <button class="btn-add-product" type="submit"><i class="fas fa-plus"></i> Agregar producto</button>
+      </form>
     </section>
 
     <section class="table-card">
@@ -139,6 +192,7 @@ body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#1a2c3e;display:fle
 <script>
 const PRODUCTS = <?= $productsJson ?>;
 const CATEGORY_LABELS = <?= json_encode($categoryLabels, JSON_UNESCAPED_UNICODE) ?>;
+let productsTable;
 
 function esc(str) {
   return String(str || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -147,6 +201,13 @@ function esc(str) {
 function productImage(product) {
   if (product.image) return `<img src="${esc(product.image)}" alt="${esc(product.name)}">`;
   return `<i class="${esc(product.icon || 'fas fa-box')}"></i>`;
+}
+
+function sortProducts() {
+  PRODUCTS.sort((a, b) => {
+    const categoryCompare = String(a.category || '').localeCompare(String(b.category || ''));
+    return categoryCompare !== 0 ? categoryCompare : parseInt(a.id || 0, 10) - parseInt(b.id || 0, 10);
+  });
 }
 
 function buildRows() {
@@ -163,6 +224,59 @@ function buildRows() {
       <td><button class="btn-save" onclick="saveProduct(${id}, this)"><i class="fas fa-save"></i> Guardar</button></td>
     </tr>`;
   }).join('');
+}
+
+function initProductsTable() {
+  productsTable = $('#productsTable').DataTable({
+    language: { url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json' },
+    order: [[2, 'asc'], [0, 'asc']],
+    pageLength: 20,
+    lengthMenu: [[10,20,50,-1],[10,20,50,'Todos']],
+    columnDefs: [{ targets:[1,5,6], orderable:false, searchable:false }],
+  });
+}
+
+function refreshProductsTable() {
+  if (productsTable) {
+    productsTable.destroy();
+  }
+  sortProducts();
+  buildRows();
+  initProductsTable();
+  document.getElementById('productCount').textContent = PRODUCTS.length;
+}
+
+async function createProduct(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const fields = form.elements;
+  const button = form.querySelector('button[type="submit"]');
+  const name = fields.namedItem('name').value.trim();
+  const desc = fields.namedItem('desc').value.trim();
+  const category = fields.namedItem('category').value;
+  const price = parseFloat(fields.namedItem('price').value);
+
+  if (!name || !desc || !category || !price || price <= 0) {
+    Swal.fire('Datos incompletos', 'Completa nombre, descripción, categoría y precio válido.', 'warning');
+    return;
+  }
+
+  button.disabled = true;
+  button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Agregando';
+  try {
+    const res = await fetch('/catalogodigsistema/api/create_product.php', { method: 'POST', body: new FormData(form) });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo crear el producto');
+    PRODUCTS.push(data.product);
+    refreshProductsTable();
+    form.reset();
+    Swal.fire({icon:'success',title:'Producto agregado',timer:1200,showConfirmButton:false,toast:true,position:'top-end'});
+  } catch (error) {
+    Swal.fire('Error', error.message, 'error');
+  } finally {
+    button.disabled = false;
+    button.innerHTML = '<i class="fas fa-plus"></i> Agregar producto';
+  }
 }
 
 async function saveProduct(id, button) {
@@ -202,14 +316,10 @@ async function saveProduct(id, button) {
   }
 }
 
+document.getElementById('createProductForm').addEventListener('submit', createProduct);
+sortProducts();
 buildRows();
-$('#productsTable').DataTable({
-  language: { url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json' },
-  order: [[2, 'asc'], [0, 'asc']],
-  pageLength: 20,
-  lengthMenu: [[10,20,50,-1],[10,20,50,'Todos']],
-  columnDefs: [{ targets:[1,5,6], orderable:false, searchable:false }],
-});
+initProductsTable();
 </script>
 </body>
 </html>
