@@ -21,13 +21,21 @@ if (empty($rawItems) || !is_array($rawItems)) {
 
 $items = [];
 $total = 0.0;
+$catalog = productsForCatalog();
+$catalogById = [];
+foreach ($catalog as $product) {
+    $catalogById[intval($product['id'] ?? 0)] = $product;
+}
 foreach ($rawItems as $item) {
-    $price = round(floatval($item['price'] ?? 0), 2);
+    $productId = intval($item['id'] ?? 0);
+    $catalogProduct = $catalogById[$productId] ?? null;
+    if (!$catalogProduct) continue;
+    $price = round(floatval($catalogProduct['price'] ?? 0), 2);
     $qty   = max(1, min(99, intval($item['quantity'] ?? 1)));
     if ($price <= 0) continue;
     $items[] = [
-        'id'       => intval($item['id'] ?? 0),
-        'name'     => sanitize($item['name'] ?? ''),
+        'id'       => $productId,
+        'name'     => sanitize($catalogProduct['name'] ?? ''),
         'price'    => $price,
         'quantity' => $qty,
     ];
@@ -49,14 +57,11 @@ $customer = [
     'zip'    => sanitize($rawCustomer['zip']    ?? ''),
 ];
 
-/* ── Payment method ── */
-$validMethods  = ['whatsapp', 'transfer', 'card'];
-$paymentMethod = in_array($body['payment_method'] ?? '', $validMethods, true)
-    ? $body['payment_method']
-    : 'whatsapp';
+/* ── Order channel: public checkout is WhatsApp only ── */
+$paymentMethod = 'whatsapp';
 
 /* ── Initial statuses ── */
-$paymentStatus  = ($paymentMethod === 'card') ? 'card' : 'pending';
+$paymentStatus  = 'pending';
 $deliveryStatus = 'pending';
 
 /* ── Create order ── */

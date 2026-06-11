@@ -7,7 +7,7 @@ requireAdmin();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard · AutoRepuestos Prooooo</title>
+<title>Dashboard · AutoRepuestos Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -82,6 +82,20 @@ tr:hover td{background:#fafcfc}
 
 .empty-state{text-align:center;padding:3rem;color:#aab;font-size:.9rem}
 
+/* ── Dashboard filters ── */
+.filters-card{background:#fff;border-radius:22px;padding:1rem 1.2rem;margin-bottom:1.4rem;box-shadow:0 2px 12px rgba(0,0,0,.04);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.filters-title{font-size:.86rem;font-weight:800;color:#1a2c3e;display:flex;align-items:center;gap:8px}
+.filters-title i{color:#E67E22}
+.filters-form{display:flex;align-items:end;gap:.7rem;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:.25rem}
+.field label{font-size:.7rem;font-weight:800;color:#6c8695;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select{border:2px solid #e2ecea;border-radius:14px;padding:.48rem .7rem;font-family:'Inter',sans-serif;font-size:.82rem;font-weight:600;color:#1a2c3e;outline:none;background:#fff}
+.field input:focus,.field select:focus{border-color:#E67E22}
+.btn-filter{border:none;border-radius:30px;padding:.55rem .95rem;font-size:.8rem;font-weight:800;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;gap:6px}
+.btn-filter.primary{background:#E67E22;color:#fff}
+.btn-filter.light{background:#f0f4f8;color:#2c4b57}
+.range-summary{font-size:.78rem;color:#6c8695;font-weight:600}
+
 /* ── Clickable stat cards ── */
 .stat-card.clickable{cursor:pointer}
 .stat-card.clickable:hover{outline:2px solid rgba(230,126,34,.45);box-shadow:0 8px 24px rgba(0,0,0,.1)}
@@ -126,6 +140,9 @@ tr:hover td{background:#fafcfc}
     <a class="nav-item active" href="/catalogodigsistema/admin/index.php">
       <i class="fas fa-chart-pie"></i><span>Dashboard</span>
     </a>
+    <a class="nav-item" href="/catalogodigsistema/admin/products.php">
+      <i class="fas fa-tags"></i><span>Catálogo</span>
+    </a>
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php">
       <i class="fas fa-box-open"></i><span>Pedidos</span>
     </a>
@@ -155,8 +172,48 @@ tr:hover td{background:#fafcfc}
 
   <div class="content">
 
+    <div class="filters-card">
+      <div>
+        <div class="filters-title"><i class="fas fa-calendar-days"></i> Consulta por periodo</div>
+        <div class="range-summary" id="rangeSummary">Mostrando información general del catálogo.</div>
+      </div>
+      <form class="filters-form" id="statsFilterForm">
+        <div class="field">
+          <label for="startDate">Desde</label>
+          <input type="date" id="startDate">
+        </div>
+        <div class="field">
+          <label for="endDate">Hasta</label>
+          <input type="date" id="endDate">
+        </div>
+        <div class="field">
+          <label for="periodGroup">Agrupar</label>
+          <select id="periodGroup">
+            <option value="day">Día</option>
+            <option value="week">Semana</option>
+            <option value="month">Mes</option>
+          </select>
+        </div>
+        <button class="btn-filter primary" type="submit"><i class="fas fa-filter"></i> Aplicar</button>
+        <button class="btn-filter light" type="button" id="last30Btn"><i class="fas fa-clock"></i> 30 días</button>
+        <button class="btn-filter light" type="button" id="clearFilterBtn"><i class="fas fa-rotate-left"></i> Limpiar</button>
+      </form>
+    </div>
+
     <!-- Stat cards -->
     <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#E0F2FE"><i class="fas fa-receipt" style="color:#0284C7"></i></div>
+        <div><div class="stat-num" id="s-total-orders">—</div><div class="stat-label">Pedidos periodo</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#DCFCE7"><i class="fab fa-whatsapp" style="color:#16A34A"></i></div>
+        <div><div class="stat-num" id="s-whatsapp-orders">—</div><div class="stat-label">Pedidos WhatsApp</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:#F3E8FF"><i class="fas fa-chart-simple" style="color:#9333EA"></i></div>
+        <div><div class="stat-num" id="s-avg-ticket">—</div><div class="stat-label">Ticket promedio</div></div>
+      </div>
       <div class="stat-card clickable" onclick="showCardOrders('payment_status','pending','Pendientes de pago')">
         <div class="stat-icon" style="background:#FEF3C7"><i class="fas fa-clock" style="color:#D97706"></i></div>
         <div><div class="stat-num" id="s-pay-pending">—</div><div class="stat-label">Pend. pago</div></div>
@@ -229,7 +286,7 @@ tr:hover td{background:#fafcfc}
     <!-- Charts -->
     <div class="charts-grid">
       <div class="chart-card">
-        <h3><i class="fas fa-chart-line"></i> Pedidos — últimos 7 días</h3>
+        <h3><i class="fas fa-chart-line"></i> <span id="chartPeriodTitle">Pedidos — últimos 7 días</span></h3>
         <div class="chart-wrap"><canvas id="chartLine"></canvas></div>
       </div>
       <div class="chart-card">
@@ -267,14 +324,29 @@ const METHOD_ICONS  = {whatsapp:'<i class="fab fa-whatsapp" style="color:#25D366
 let chartLine, chartDoughnut, chartBar;
 let ALL_ORDERS_STAT = [];
 
+function currentStatsParams() {
+  const params = new URLSearchParams();
+  const start = document.getElementById('startDate')?.value || '';
+  const end = document.getElementById('endDate')?.value || '';
+  const period = document.getElementById('periodGroup')?.value || 'day';
+  if (start) params.set('start', start);
+  if (end) params.set('end', end);
+  params.set('period', period);
+  return params;
+}
+
 async function loadStats() {
   try {
-    const res  = await fetch('/catalogodigsistema/api/get_stats.php');
+    const params = currentStatsParams();
+    const res  = await fetch('/catalogodigsistema/api/get_stats.php?' + params.toString());
     const data = await res.json();
     if (!res.ok) return;
 
     ALL_ORDERS_STAT = data.all_orders || [];
 
+    document.getElementById('s-total-orders').textContent = data.total_orders;
+    document.getElementById('s-whatsapp-orders').textContent = data.whatsapp_orders;
+    document.getElementById('s-avg-ticket').textContent = '$' + (data.average_order || 0).toLocaleString('es-MX', {minimumFractionDigits:2});
     document.getElementById('s-pay-pending').textContent   = data.pay_pending;
     document.getElementById('s-pay-transfer').textContent  = data.pay_transfer;
     document.getElementById('s-pay-cash').textContent      = data.pay_cash;
@@ -298,7 +370,22 @@ async function loadStats() {
 
     buildCharts(data);
     buildRecentTable(data.recent_orders);
+    updateRangeSummary(data);
   } catch(e) { console.error(e); }
+}
+
+function updateRangeSummary(data) {
+  const summary = document.getElementById('rangeSummary');
+  const title = document.getElementById('chartPeriodTitle');
+  const range = data.range || {};
+  const groupLabels = {day:'día', week:'semana', month:'mes'};
+  const hasRange = range.start || range.end;
+  const customGroup = (range.period || 'day') !== 'day';
+  const text = hasRange
+    ? `Mostrando ${data.total_orders} pedido${data.total_orders!==1?'s':''} ${range.start ? 'desde ' + range.start : ''} ${range.end ? 'hasta ' + range.end : ''}, agrupado por ${groupLabels[range.period] || 'día'}.`
+    : `Mostrando indicadores generales. Gráfica agrupada por ${groupLabels[range.period] || 'día'}.`;
+  summary.textContent = text;
+  title.textContent = (hasRange || customGroup) ? `Pedidos por ${groupLabels[range.period] || 'día'}` : 'Pedidos — últimos 7 días';
 }
 
 function showCardOrders(field, value, title) {
@@ -424,6 +511,28 @@ function buildRecentTable(orders) {
 }
 
 function escHtml(str) { return (str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+document.getElementById('statsFilterForm').addEventListener('submit', (event) => {
+  event.preventDefault();
+  loadStats();
+});
+
+document.getElementById('last30Btn').addEventListener('click', () => {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(end.getDate() - 29);
+  document.getElementById('startDate').value = start.toISOString().slice(0, 10);
+  document.getElementById('endDate').value = end.toISOString().slice(0, 10);
+  document.getElementById('periodGroup').value = 'day';
+  loadStats();
+});
+
+document.getElementById('clearFilterBtn').addEventListener('click', () => {
+  document.getElementById('startDate').value = '';
+  document.getElementById('endDate').value = '';
+  document.getElementById('periodGroup').value = 'day';
+  loadStats();
+});
 
 loadStats();
 </script>
