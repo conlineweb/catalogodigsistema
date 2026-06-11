@@ -121,6 +121,7 @@ tr:last-child td{border-bottom:none}
   </div>
   <nav class="sidebar-nav">
     <a class="nav-item" href="/catalogodigsistema/admin/index.php"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+    <a class="nav-item" href="/catalogodigsistema/admin/products.php"><i class="fas fa-tags"></i><span>Catálogo</span></a>
     <a class="nav-item active" href="/catalogodigsistema/admin/orders.php"><i class="fas fa-box-open"></i><span>Pedidos</span></a>
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php?status=pending"><i class="fas fa-clock"></i><span>Pendientes</span></a>
     <a class="nav-item" href="/catalogodigsistema/admin/orders.php?status=pending_transfer"><i class="fas fa-university"></i><span>Transferencias</span></a>

@@ -111,6 +111,7 @@ body{font-family:'Inter',sans-serif;background:#f0f4f8;color:#1a2c3e;display:fle
   </div>
   <nav class="sidebar-nav">
     <a class="nav-item" href="/catalogodigsistema/admin/index.php"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+    <a class="nav-item" href="/catalogodigsistema/admin/products.php"><i class="fas fa-tags"></i><span>Catálogo</span></a>
     <a class="nav-item active" href="/catalogodigsistema/admin/orders.php"><i class="fas fa-box-open"></i><span>Pedidos</span></a>
     <a class="nav-item" href="/catalogodigsistema/index.php" target="_blank"><i class="fas fa-store"></i><span>Ver tienda</span></a>
   </nav>
